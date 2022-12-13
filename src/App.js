@@ -1,24 +1,40 @@
 import logo from './logo.svg';
 import './App.css';
+import React, { useEffect, useState } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Main from './page/Main';
+import Todolist from './page/Todolist';
+import axios from 'axios';
 
 function App() {
+  const [ todoData, setTodoData ] = useState([])
+
+  useEffect(() => {
+    fetch('http://localhost:3001/todos', {method : "GET"})
+    .then(res => res.json)
+    .then(res => {
+      setTodoData(res.data)
+    })
+    .catch(err => console.log(err))
+  }, [])
+
+  const deleteTodo = function(id) {
+    let newData = todoData.filter(el => el.id !== id);
+    setTodoData(newData);
+
+    axios.delete(`http://localhost:3001/todos/${id}`)
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Main />} />
+        <Route
+          path="/todolist"
+          element={<Todolist todoData={todoData} setTodoData={setTodoData} deleteTodo={deleteTodo}/>}
+        />
+      </Routes>
+    </Router>
   );
 }
 
