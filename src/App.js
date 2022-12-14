@@ -8,15 +8,16 @@ import axios from 'axios';
 
 function App() {
   const [ todoData, setTodoData ] = useState([])
+  const [id, setId] = useState(null)
 
   useEffect(() => {
-    fetch('http://localhost:3001/todos', {method : "GET"})
-    .then(res => res.json)
+    axios.get('http://localhost:3001/todos')
     .then(res => {
       setTodoData(res.data)
+      setId(res.data[res.data.length -1].id)
     })
     .catch(err => console.log(err))
-  }, [])
+  }, [todoData])
 
   const deleteTodo = function(id) {
     let newData = todoData.filter(el => el.id !== id);
@@ -25,13 +26,22 @@ function App() {
     axios.delete(`http://localhost:3001/todos/${id}`)
   }
 
+  const plusTodo = function(id, body) {
+    let newData = {
+      "id": id,
+      "body": body
+    }
+
+    axios.post('http://localhost:3001/todos/', newData)
+  }
+
   return (
     <Router>
       <Routes>
         <Route path="/" element={<Main />} />
         <Route
           path="/todolist"
-          element={<Todolist todoData={todoData} setTodoData={setTodoData} deleteTodo={deleteTodo}/>}
+          element={<Todolist todoData={todoData} setTodoData={setTodoData} deleteTodo={deleteTodo} plusTodo={plusTodo} id={id}/>}
         />
       </Routes>
     </Router>

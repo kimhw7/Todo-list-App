@@ -1,11 +1,11 @@
-export default function Todo(todo, handleClick) {
+export default function Todo({todo, handleClick}) {
 
   return (
-    <div key={todo.data.id} className="todoWrapper">
+    <div key={todo.id} className="todoWrapper">
       <input type='checkbox'></input>
-      <span>{todo.data.body}</span>
+      <span>{todo.body}</span>
       <button onClick={(e) => 
-          handleClick(todo.data)
+          handleClick(todo)
         }>x</button>
     </div>
 
